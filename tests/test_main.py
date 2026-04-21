@@ -3,7 +3,7 @@ import unittest
 import io
 import contextlib
 
-from main import CustomerManager
+from main import CustomerManager, calculate_shipping_fee_for_heavy_items
 
 class TestCustomerManager(unittest.TestCase):
 
@@ -40,6 +40,14 @@ class TestCustomerManager(unittest.TestCase):
             {name: [purchase, purchase]},
             cm.customers
         )
+
+    def test_add_purchases(self):
+        cm = CustomerManager()
+        name = "Alice"
+        purchases = [{'price': 50, 'item': 'banana'}, {'price': 20, 'item': 'apple'}]
+        cm.add_purchases(name, purchases)
+
+        self.assertEqual({name: purchases}, cm.customers)
 
     def test_discount_eligibility(self):
         cm = CustomerManager()
@@ -134,6 +142,17 @@ class TestCustomerManager(unittest.TestCase):
         sys.stdout = printed
         cm.generate_report()
         self.assertEqual(printed.getvalue(), "Bob\nNo discount\n")
+
+    def test_heavy_item_shipping_fee(self):
+        purchases = [{'price': 70, 'weight': 25}]
+        purchases_under_threshold = [{'price': 70, 'weight': 15}]
+
+        fee = calculate_shipping_fee_for_heavy_items(purchases)
+        self.assertEqual(fee, 50)
+
+        under_threshold_fee = calculate_shipping_fee_for_heavy_items(purchases_under_threshold)
+        self.assertEqual(under_threshold_fee, 20)
+
 
 if __name__ == "__main__":
     unittest.main()
