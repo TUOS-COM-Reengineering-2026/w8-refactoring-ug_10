@@ -3,7 +3,7 @@ import unittest
 import io
 import contextlib
 
-from main import CustomerManager, calculate_shipping_fee_for_fragile_items
+from main import CustomerManager
 
 class TestCustomerManager(unittest.TestCase):
 
@@ -55,18 +55,28 @@ class TestCustomerManager(unittest.TestCase):
         self.assertIn("Bob", output)
         self.assertIn("Eligible for discount", output)
 
-    def test_heavy_item_shipping_fee(self):
+    def test_shipping_fee_with_heavy_item(self):
         cm = CustomerManager()
         purchases = [{'price': 100, 'weight': 25}]
 
         fee = cm.calculate_shipping_fee(purchases)
         self.assertEqual(fee, 50)
 
-    def test_fragile_item_shipping_fee(self):
+    def test_shipping_fee_with_fragile_item(self):
+        cm = CustomerManager()
+
         purchases = [{'price': 70, 'fragile': True}]
 
-        fee = calculate_shipping_fee_for_fragile_items(purchases)
+        fee = cm.calculate_shipping_fee(purchases, check_for_fragile_items=True)
         self.assertEqual(fee, 60)
+
+    def test_shipping_fee_with_checking_for_fragile_items(self):
+        cm = CustomerManager()
+
+        purchases = [{'price': 70, 'fragile': False}]
+
+        fee = cm.calculate_shipping_fee(purchases, check_for_fragile_items=True)
+        self.assertEqual(fee, 25)
 
     def test_no_special_items_shipping_fee(self):
         cm = CustomerManager()
@@ -75,8 +85,7 @@ class TestCustomerManager(unittest.TestCase):
         fee = cm.calculate_shipping_fee(purchases)
         self.assertEqual(fee, 20)
 
-        fee_fragile = calculate_shipping_fee_for_fragile_items(purchases)
-        self.assertEqual(fee_fragile, 25)
+       
 
     # Generate Report unit tests:
     # There contain many different branches to cover, separated into different tests.
