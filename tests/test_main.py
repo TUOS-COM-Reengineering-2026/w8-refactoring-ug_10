@@ -21,7 +21,7 @@ class TestCustomerManager(unittest.TestCase):
         cm = CustomerManager()
         name = "Alice"
         purchase = {'price': 50, 'item': 'banana'}
-        cm.add_purchase(name, purchase)
+        cm.add_purchases(name, [purchase])
 
         self.assertEqual(
             {name: [purchase]},
@@ -32,8 +32,8 @@ class TestCustomerManager(unittest.TestCase):
         cm = CustomerManager()
         name = "Alice"
         purchase = {'price': 50, 'item': 'banana'}
-        cm.add_purchase(name, purchase)
-        cm.add_purchase(name, purchase)
+        cm.add_purchases(name, [purchase])
+        cm.add_purchases(name, [purchase])
 
         self.assertEqual(
             {name: [purchase, purchase]},

@@ -1,19 +1,14 @@
+from collections import defaultdict
 class CustomerManager:
     def __init__(self):
-        self.customers = {}
+        self.customers = defaultdict(list)
         self.tax_rate = 0.2
         self.tax_threshold = 100
         self.discount_threshold = 500
-
+    
     def add_customer(self, name, purchases):
-        if name in self.customers.keys():
-            self.customers[name].extend(purchases)
-        else:
-            self.customers[name] = purchases
-
-    def add_purchase(self, name, purchase):
-        self.add_customer(name, [purchase])
-
+        self.customers[name].extend(purchases)
+    
     def add_purchases(self, name, purchases):
         self.add_customer(name, purchases)
 
