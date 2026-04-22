@@ -1,5 +1,10 @@
 from collections import defaultdict
 class CustomerManager:
+
+    FUTURE_DISCOUNT = 300
+    VIP = 1000
+    PRIORITY = 800
+
     def __init__(self):
         self.customers = defaultdict(list)
         self.tax_rate = 0.2
@@ -13,27 +18,37 @@ class CustomerManager:
         self.add_customer(name, purchases)
 
     def generate_report(self):
-        for y, x in self.customers.items():
-            a = 0
-            for z in x:
-                if z['price'] > self.tax_threshold:
-                    taxed_price = z['price'] * (1 + self.tax_rate)
-                    a += taxed_price
+        for c, p in self.customers.items():
+            total_price = 0
+
+            for item in p:
+                if item['price'] > self.tax_threshold:
+                    taxed_price = item['price'] * (1 + self.tax_rate)
+                    total_price += taxed_price
                 else:
-                    a += z['price']
-            print(y)
-            if a > self.discount_threshold:
-                print("Eligible for discount")
-            else:
-                if a > 300:
-                    print("Potential future discount customer")
-                else:
-                    print("No discount")
-            if a > 1000:
-                print("VIP Customer!")
-            else:
-                if a > 800:
-                    print("Priority Customer")
+                    total_price += item['price']
+
+            print(c)
+
+            self.customerBenefits(total_price)
+      
+
+    def customerBenefits(self, total_price):
+        print(self.isDiscount(total_price))
+        print(self.customerStatus(total_price))
+
+
+    def isDiscount(self, total_price):
+        if total_price > self.discount_threshold:
+            return "Eligible for discount"
+        else:
+            return "Potential future discount customer" if total_price > self.FUTURE_DISCOUNT else "No discount"
+        
+    def isPriority(self, total_price):
+        return "Priority Customer" if total_price > self.PRIORITY else ""
+        
+    def customerStatus(self, total_price):
+        return "VIP Customer!" if total_price > self.VIP else self.isPriority(total_price)
 
     def calculate_shipping_fee(self, purchases,check_for_fragile_items=False):
         heavy_item = False
@@ -50,7 +65,3 @@ class CustomerManager:
             return 60
         else:
             return 25 if check_for_fragile_items else 20
-
-
-
-    flat_tax = 0.2
