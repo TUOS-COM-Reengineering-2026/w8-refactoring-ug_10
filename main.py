@@ -30,12 +30,14 @@ class CustomerManager:
 
             print(c)
 
-            self.customerBenefits(total_price)
+            print(self.customerBenefits(total_price))
       
 
     def customerBenefits(self, total_price):
-        print(self.isDiscount(total_price))
-        print(self.customerStatus(total_price))
+        discount = self.isDiscount(total_price)
+        status = self.customerStatus(total_price)
+
+        return f"{discount}\n{status}" if status else discount
 
 
     def isDiscount(self, total_price):
